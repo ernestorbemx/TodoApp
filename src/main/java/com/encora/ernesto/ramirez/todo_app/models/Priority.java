@@ -1,7 +1,7 @@
 package com.encora.ernesto.ramirez.todo_app.models;
 
 public enum Priority {
-    HIGH,
+    LOW,
     MEDIUM,
-    LOW;
+    HIGH;
 }

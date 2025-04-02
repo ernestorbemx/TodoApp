@@ -2,9 +2,6 @@ package com.encora.ernesto.ramirez.todo_app.dtos;
 
 import com.encora.ernesto.ramirez.todo_app.models.Priority;
 
-import java.util.List;
-import java.util.Optional;
-
 public class TodoFilter {
     private Boolean done;
     private String text;
@@ -22,7 +19,7 @@ public class TodoFilter {
     }
 
     private Priority priority;
-    private List<String> sortingFields;
+    private String sortingFields;
 
     public String getText() {
         return text;
@@ -36,11 +33,11 @@ public class TodoFilter {
         return priority;
     }
 
-    public List<String> getSortingFields() {
+    public String getSortingFields() {
         return sortingFields;
     }
 
-    public void setSortingFields(List<String> sortingFields) {
+    public void setSortingFields(String sortingFields) {
         this.sortingFields = sortingFields;
     }
 

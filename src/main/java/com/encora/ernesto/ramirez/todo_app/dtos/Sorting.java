@@ -14,7 +14,7 @@ public class Sorting {
 
     public static Sorting fromString(String src) {
         boolean descending = src.contains("-");
-        return new Sorting(src.replace("-",""), descending);
+        return new Sorting(src.replace("-",""), !descending);
     }
 
     public String getField() {

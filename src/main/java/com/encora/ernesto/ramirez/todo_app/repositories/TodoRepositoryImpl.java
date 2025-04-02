@@ -1,18 +1,17 @@
 package com.encora.ernesto.ramirez.todo_app.repositories;
 
 import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
+import com.encora.ernesto.ramirez.todo_app.dtos.Sorting;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.Stream;
 
 
 @Component
-public class TodoRepositoryImpl implements TodoRepository{
+public class TodoRepositoryImpl implements TodoRepository {
     public List<Todo> todos = new ArrayList<>();
 
     @Override
@@ -48,7 +47,7 @@ public class TodoRepositoryImpl implements TodoRepository{
     public Iterable<Todo> findAllById(Iterable<Integer> integers) {
         List<Todo> occurrences = new ArrayList<>();
         for (Integer i : integers) {
-            Optional<Todo> todoToDelete =  this.todos.stream().filter(s -> s.getId() == i).findFirst();
+            Optional<Todo> todoToDelete = this.todos.stream().filter(s -> s.getId() == i).findFirst();
             todoToDelete.ifPresent(occurrences::add);
         }
         return occurrences;
@@ -61,8 +60,8 @@ public class TodoRepositoryImpl implements TodoRepository{
 
     @Override
     public void deleteById(Integer id) {
-       Optional<Todo> todoToDelete =  this.todos.stream().filter(s -> s.getId() == id).findFirst();
-       todoToDelete.ifPresent((t) -> todos.remove(t));
+        Optional<Todo> todoToDelete = this.todos.stream().filter(s -> s.getId() == id).findFirst();
+        todoToDelete.ifPresent((t) -> todos.remove(t));
     }
 
     @Override
@@ -73,7 +72,7 @@ public class TodoRepositoryImpl implements TodoRepository{
     @Override
     public void deleteAllById(Iterable<? extends Integer> integers) {
         for (Integer i : integers) {
-            Optional<Todo> todoToDelete =  this.todos.stream().filter(s -> s.getId() == i).findFirst();
+            Optional<Todo> todoToDelete = this.todos.stream().filter(s -> s.getId() == i).findFirst();
             todoToDelete.ifPresent((t) -> todos.remove(t));
         }
     }
@@ -93,20 +92,39 @@ public class TodoRepositoryImpl implements TodoRepository{
     @Override
     public List<Todo> getTodos(TodoFilter filter, Pagination pagination) {
 
-//        List<Sorting> criterias = filter.getSortingFields().stream().map(Sorting::fromString).collect(Collectors.toList());
-//        Optional<Sorting> prioritySort = criterias.stream().filter(sorting -> sorting.getField().equalsIgnoreCase("priority")).findFirst();
-//        Optional<Sorting> dueDate = criterias.stream().filter(sorting -> sorting.getField().equalsIgnoreCase("dueDate")).findFirst();
-        return this.todos.stream()
-                .skip((pagination.getPage()-1) * pagination.getSize())
-                .filter((t) -> filter.getPriority() == null ||  filter.getPriority().equals(t.getPriority()))
-                .filter((t) -> filter.getDone() == null ||  filter.getDone() == t.isDone())
-                .filter((t) -> filter.getText() == null || t.getText().contains(filter.getText()))
-//                .sorted((t) -> {
-//
-//                    if(dueDate.isPresent()) {
-//                        int c1 = t.getDueDate().compareTo();
-//                    }
-//                })
-                .collect(Collectors.toList());
+        int skip = (pagination.getPage() - 1) * pagination.getSize();
+        Stream<Todo> filteredTodos = this.todos.stream()
+                .filter((t) -> filter.getPriority() == null || filter.getPriority().equals(t.getPriority()))
+                .filter((t) -> filter.getDone() == null || filter.getDone() == t.isDone())
+                .filter((t) -> filter.getText() == null || t.getText().contains(filter.getText()));
+                //.skip((pagination.getPage() - 1) * pagination.getSize());
+
+        List<Sorting> criterias = filter.getSortingFields() == null ? new ArrayList<>() : Arrays.stream(filter.getSortingFields().split(",")).map(Sorting::fromString).toList();
+        Stream<Comparator<Todo>> comparators = criterias.stream()
+                .filter(c -> c.getField().equalsIgnoreCase("priority") || c.getField().equalsIgnoreCase("dueDate"))
+                .map(c -> (t1, t2) -> {
+                    if (c.getField().equalsIgnoreCase("priority")) {
+                        return t1.getPriority() == null ? -1 : t1.getPriority().compareTo(t2.getPriority()) * (c.isAscending() ? 1 : -1);
+                    }
+                    if (c.getField().equalsIgnoreCase("dueDate")) {
+                        if(t1.getDueDate() == null && t2.getDueDate() != null) {
+                            return -1 * (c.isAscending() ? 1 : -1);
+                        }
+                        if (t2.getDueDate() == null && t1.getDueDate() != null) {
+                            return (c.isAscending() ? 1 : -1);
+                        }
+                        return t1.getDueDate().compareTo(t2.getDueDate()) * (c.isAscending() ? 1 : -1);
+                    }
+                    return 0;
+                });
+
+        Optional<Comparator<Todo>> sortComparator = comparators.reduce((t1,t2) -> t1.thenComparing(t2));
+
+
+        if (sortComparator.isPresent()) {
+           return filteredTodos.sorted(sortComparator.get())
+                   .skip(skip).toList();
+        }
+        return filteredTodos.skip(skip).toList();
     }
 }
