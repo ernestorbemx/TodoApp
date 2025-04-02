@@ -56,4 +56,12 @@ public class TodoService {
         return Optional.empty();
     }
 
+    public Optional<Todo> deleteTodo(int todo) {
+        Optional<Todo> ot = this.todoRepository.findById(todo);
+        if(ot.isPresent()) {
+            this.todoRepository.deleteById(todo);
+        }
+        return ot;
+    }
+
 }

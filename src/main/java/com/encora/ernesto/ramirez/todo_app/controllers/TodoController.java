@@ -42,6 +42,11 @@ public class TodoController {
         return this.todoService.editTodoCompletion(id, false);
     }
 
+    @DeleteMapping("/{id}")
+    public Optional<Todo> delete(@PathVariable("id") int id) {
+        return this.todoService.deleteTodo(id);
+    }
+
     @GetMapping
     public List<Todo> getTodos(@Valid @ModelAttribute TodoFilter dto, @Valid @ModelAttribute Pagination paginationDto) {
         System.out.println(dto.toString());
