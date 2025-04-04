@@ -113,6 +113,9 @@ public class TodoRepositoryImpl implements TodoRepository {
                         if (t2.getDueDate() == null && t1.getDueDate() != null) {
                             return (c.isAscending() ? 1 : -1);
                         }
+                        if(t1.getDueDate() == null && t2.getDueDate()==null) {
+                            return 0;
+                        }
                         return t1.getDueDate().compareTo(t2.getDueDate()) * (c.isAscending() ? 1 : -1);
                     }
                     return 0;
@@ -123,8 +126,8 @@ public class TodoRepositoryImpl implements TodoRepository {
 
         if (sortComparator.isPresent()) {
            return filteredTodos.sorted(sortComparator.get())
-                   .skip(skip).toList();
+                   .skip(skip).limit(pagination.getSize()).toList();
         }
-        return filteredTodos.skip(skip).toList();
+        return filteredTodos.skip(skip).limit(pagination.getSize()).toList();
     }
 }
