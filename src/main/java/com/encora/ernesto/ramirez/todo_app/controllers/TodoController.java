@@ -1,6 +1,7 @@
 package com.encora.ernesto.ramirez.todo_app.controllers;
 
 import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
+import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoDto;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
@@ -48,7 +49,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> getTodos(@Valid @ModelAttribute TodoFilter dto, @Valid @ModelAttribute Pagination paginationDto) {
+    public PaginationResult<Todo> getTodos(@Valid @ModelAttribute TodoFilter dto, @Valid @ModelAttribute Pagination paginationDto) {
         System.out.println(dto.toString());
         System.out.println(paginationDto.toString());
         return this.todoService.getTodos(dto, paginationDto);

@@ -1,6 +1,7 @@
 package com.encora.ernesto.ramirez.todo_app.services;
 
 import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
+import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoDto;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
@@ -22,8 +23,14 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public List<Todo> getTodos(TodoFilter filter, Pagination pagination) {
-        return this.todoRepository.getTodos(filter, pagination);
+    public PaginationResult<Todo> getTodos(TodoFilter filter, Pagination pagination) {
+        long count = this.todoRepository.count();
+        return new PaginationResult<>(
+                pagination.getPage(),
+                count,
+                Math.max(1,(long)Math.ceil((double) count / pagination.getSize())),
+                this.todoRepository.getTodos(filter, pagination)
+        );
     }
 
     public Todo createTodo(TodoDto todo) {
