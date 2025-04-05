@@ -1,9 +1,6 @@
 package com.encora.ernesto.ramirez.todo_app.controllers;
 
-import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
-import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
-import com.encora.ernesto.ramirez.todo_app.dtos.TodoDto;
-import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
+import com.encora.ernesto.ramirez.todo_app.dtos.*;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
 import com.encora.ernesto.ramirez.todo_app.services.TodoService;
 import jakarta.validation.Valid;
@@ -53,6 +50,11 @@ public class TodoController {
         System.out.println(dto.toString());
         System.out.println(paginationDto.toString());
         return this.todoService.getTodos(dto, paginationDto);
+    }
+
+    @GetMapping("/stats")
+    public Stats getStats() {
+        return this.todoService.getStats();
     }
 
     @GetMapping("/example")

@@ -1,16 +1,15 @@
 package com.encora.ernesto.ramirez.todo_app.services;
 
-import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
-import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
-import com.encora.ernesto.ramirez.todo_app.dtos.TodoDto;
-import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
+import com.encora.ernesto.ramirez.todo_app.dtos.*;
+import com.encora.ernesto.ramirez.todo_app.models.Priority;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
 import com.encora.ernesto.ramirez.todo_app.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TodoService {
@@ -70,5 +69,28 @@ public class TodoService {
         }
         return ot;
     }
+
+    public Stats getStats() {
+
+        return new Stats(
+                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
+                        .filter(t -> t.getCompletionDate() != null)
+                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
+                        .average().orElse(-1),
+                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
+                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.LOW)
+                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
+                        .average().orElse(-1),
+                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
+                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.MEDIUM)
+                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
+                        .average().orElse(-1),
+                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
+                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.HIGH)
+                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
+                        .average().orElse(-1)
+        );
+    }
+
 
 }
