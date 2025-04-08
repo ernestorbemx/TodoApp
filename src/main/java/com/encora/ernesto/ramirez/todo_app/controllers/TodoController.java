@@ -6,7 +6,6 @@ import com.encora.ernesto.ramirez.todo_app.services.TodoService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 @CrossOrigin(origins = {"http://localhost:8080", "http://127.0.0.1:8080"})
 @RestController()

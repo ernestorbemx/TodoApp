@@ -34,8 +34,7 @@ public class TodoService {
 
     public Todo createTodo(TodoDto todo) {
         Todo newTodo = new Todo(todo.getText(), todo.getDueDate(), todo.getPriority(), LocalDateTime.now());
-        this.todoRepository.save(newTodo);
-        return newTodo;
+        return this.todoRepository.save(newTodo);
     }
 
     // Edition is not guaranteed
