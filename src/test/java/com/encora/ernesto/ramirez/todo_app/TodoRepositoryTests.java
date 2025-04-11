@@ -8,12 +8,9 @@ import com.encora.ernesto.ramirez.todo_app.models.Todo;
 import com.encora.ernesto.ramirez.todo_app.repositories.TodoRepository;
 import com.encora.ernesto.ramirez.todo_app.repositories.TodoRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;

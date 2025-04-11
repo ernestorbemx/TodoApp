@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 @Service
 public class TodoService {
 
-    private static final int PAG_SIZE = 10;
 
     private final TodoRepository todoRepository;
 

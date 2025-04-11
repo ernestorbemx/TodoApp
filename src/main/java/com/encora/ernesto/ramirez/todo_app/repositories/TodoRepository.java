@@ -21,7 +21,7 @@ public interface TodoRepository {
 
     Iterable<Todo> findAllById(Iterable<Integer> integers);
 
-    public boolean existsById(Integer integer);
+    boolean existsById(Integer integer);
 
     long count();
 
