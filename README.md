@@ -30,6 +30,7 @@ These are the endpoints implemented by the current version of the project.
 - Update Todo Status (Done/Undone)
 - Delete Todo
 - Get Todos (Paginated, Sorted and Filtered)
+- Show real time completion stats
 
 ## Prerequisites
 
