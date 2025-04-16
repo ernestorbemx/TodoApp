@@ -161,6 +161,7 @@ public class TodoServiceTests {
         pagination.setPage(1);
         pagination.setSize(10);
         Mockito.when(todoRepository.findAll()).thenReturn(todos);
+        Mockito.when(todoRepository.getTodos(filters, pagination)).thenReturn(new PaginationResult<>(1,3,1, todos));
         Mockito.when(todoRepository.count()).thenReturn((long)todos.size());
         PaginationResult<Todo> result = service.getTodos(filters, pagination);
         Mockito.verify(todoRepository, Mockito.times(1)).getTodos(filters, pagination);

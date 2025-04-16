@@ -1,6 +1,7 @@
 package com.encora.ernesto.ramirez.todo_app.repositories;
 
 import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
+import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
 import com.encora.ernesto.ramirez.todo_app.dtos.Sorting;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
@@ -90,13 +91,13 @@ public class TodoRepositoryImpl implements TodoRepository {
     }
 
     @Override
-    public List<Todo> getTodos(TodoFilter filter, Pagination pagination) {
+    public PaginationResult<Todo> getTodos(TodoFilter filter, Pagination pagination) {
 
         int skip = (pagination.getPage() - 1) * pagination.getSize();
         Stream<Todo> filteredTodos = this.todos.stream()
                 .filter((t) -> filter.getPriority() == null || filter.getPriority().equals(t.getPriority()))
                 .filter((t) -> filter.getDone() == null || filter.getDone() == t.isDone())
-                .filter((t) -> filter.getText() == null || t.getText().contains(filter.getText()));
+                .filter((t) -> filter.getText() == null || t.getText().toLowerCase().contains(filter.getText().toLowerCase()));
                 //.skip((pagination.getPage() - 1) * pagination.getSize());
 
         List<Sorting> criterias = filter.getSortingFields() == null ? new ArrayList<>() : Arrays.stream(filter.getSortingFields().split(",")).map(Sorting::fromString).toList();
@@ -123,8 +124,10 @@ public class TodoRepositoryImpl implements TodoRepository {
 
         Optional<Comparator<Todo>> sortComparator = comparators.reduce(Comparator::thenComparing);
 
-
-        return sortComparator.map(todoComparator -> filteredTodos.sorted(todoComparator)
-                .skip(skip).limit(pagination.getSize()).toList()).orElseGet(() -> filteredTodos.skip(skip).limit(pagination.getSize()).toList());
+        var beforePaginating = sortComparator.map(todoComparator -> filteredTodos.sorted(todoComparator)).orElse(filteredTodos).toList();
+        var paginated = beforePaginating.stream().skip(skip).limit(pagination.getSize()).toList();
+        var count = beforePaginating.size();
+        var availablePages = Math.max(1,(long)Math.ceil((double) count / pagination.getSize()));
+        return new PaginationResult<>(pagination.getPage(), count, availablePages, paginated) ;
     }
 }

@@ -22,13 +22,7 @@ public class TodoService {
     }
 
     public PaginationResult<Todo> getTodos(TodoFilter filter, Pagination pagination) {
-        long count = this.todoRepository.count();
-        return new PaginationResult<>(
-                pagination.getPage(),
-                count,
-                Math.max(1,(long)Math.ceil((double) count / pagination.getSize())),
-                this.todoRepository.getTodos(filter, pagination)
-        );
+        return this.todoRepository.getTodos(filter, pagination);
     }
 
     public Todo createTodo(TodoDto todo) {

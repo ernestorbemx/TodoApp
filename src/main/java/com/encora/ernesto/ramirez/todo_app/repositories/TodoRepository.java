@@ -1,15 +1,15 @@
 package com.encora.ernesto.ramirez.todo_app.repositories;
 
 import com.encora.ernesto.ramirez.todo_app.dtos.Pagination;
+import com.encora.ernesto.ramirez.todo_app.dtos.PaginationResult;
 import com.encora.ernesto.ramirez.todo_app.dtos.TodoFilter;
 import com.encora.ernesto.ramirez.todo_app.models.Todo;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface TodoRepository {
 
-    List<Todo> getTodos(TodoFilter filter, Pagination pagination);
+    PaginationResult<Todo> getTodos(TodoFilter filter, Pagination pagination);
 
     <S extends Todo> S save(S entity);
 

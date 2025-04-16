@@ -70,7 +70,7 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(10);
         pagination.setPage(1);
-        assertEquals(5, repository.getTodos(filter,pagination).size());
+        assertEquals(5, repository.getTodos(filter,pagination).getData().size());
     }
 
     @Test
@@ -92,9 +92,9 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(10);
         pagination.setPage(1);
-        assertEquals(1, repository.getTodos(filter,pagination).size());
+        assertEquals(1, repository.getTodos(filter,pagination).getData().size());
         filter.setText(":)");
-        assertEquals(2, repository.getTodos(filter,pagination).size());
+        assertEquals(2, repository.getTodos(filter,pagination).getData().size());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(10);
         pagination.setPage(1);
-        assertEquals(3, repository.getTodos(filter,pagination).size());
+        assertEquals(3, repository.getTodos(filter,pagination).getData().size());
     }
 
     @Test
@@ -140,9 +140,9 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(10);
         pagination.setPage(1);
-        assertEquals(2, repository.getTodos(filter,pagination).size());
+        assertEquals(2, repository.getTodos(filter,pagination).getData().size());
         filter.setDone(false);
-        assertEquals(3, repository.getTodos(filter,pagination).size());
+        assertEquals(3, repository.getTodos(filter,pagination).getData().size());
     }
 
     @Test
@@ -163,13 +163,13 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(2);
         pagination.setPage(1);
-        assertEquals(2, repository.getTodos(filter,pagination).size());
+        assertEquals(2, repository.getTodos(filter,pagination).getData().size());
         pagination.setPage(2);
-        assertEquals(2, repository.getTodos(filter,pagination).size());
+        assertEquals(2, repository.getTodos(filter,pagination).getData().size());
         pagination.setPage(3);
-        assertEquals(1, repository.getTodos(filter,pagination).size());
+        assertEquals(1, repository.getTodos(filter,pagination).getData().size());
         pagination.setPage(4);
-        assertEquals(0, repository.getTodos(filter,pagination).size());
+        assertEquals(0, repository.getTodos(filter,pagination).getData().size());
     }
 
     @Test
@@ -194,11 +194,11 @@ public class TodoRepositoryTests {
         Pagination pagination = new Pagination();
         pagination.setSize(2);
         pagination.setPage(1);
-        assertEquals(0, repository.getTodos(filter,pagination).size());
+        assertEquals(0, repository.getTodos(filter,pagination).getData().size());
         filter.setPriority(null);
-        assertEquals(2, repository.getTodos(filter,pagination).size());
+        assertEquals(2, repository.getTodos(filter,pagination).getData().size());
         pagination.setPage(2);
-        assertEquals(0, repository.getTodos(filter,pagination).size());
+        assertEquals(0, repository.getTodos(filter,pagination).getData().size());
 
     }
 
