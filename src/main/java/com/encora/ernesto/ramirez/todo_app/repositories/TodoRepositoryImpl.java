@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 @Component
 public class TodoRepositoryImpl implements TodoRepository {
-    public List<Todo> todos = new ArrayList<>();
+    public final List<Todo> todos = new ArrayList<>();
 
     @Override
     public <S extends Todo> S save(S entity) {
@@ -61,7 +61,7 @@ public class TodoRepositoryImpl implements TodoRepository {
     @Override
     public void deleteById(Integer id) {
         Optional<Todo> todoToDelete = this.todos.stream().filter(s -> s.getId() == id).findFirst();
-        todoToDelete.ifPresent((t) -> todos.remove(t));
+        todoToDelete.ifPresent(todos::remove);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class TodoRepositoryImpl implements TodoRepository {
     public void deleteAllById(Iterable<? extends Integer> integers) {
         for (Integer i : integers) {
             Optional<Todo> todoToDelete = this.todos.stream().filter(s -> s.getId() == i).findFirst();
-            todoToDelete.ifPresent((t) -> todos.remove(t));
+            todoToDelete.ifPresent(todos::remove);
         }
     }
 
@@ -121,13 +121,10 @@ public class TodoRepositoryImpl implements TodoRepository {
                     return 0;
                 });
 
-        Optional<Comparator<Todo>> sortComparator = comparators.reduce((t1,t2) -> t1.thenComparing(t2));
+        Optional<Comparator<Todo>> sortComparator = comparators.reduce(Comparator::thenComparing);
 
 
-        if (sortComparator.isPresent()) {
-           return filteredTodos.sorted(sortComparator.get())
-                   .skip(skip).limit(pagination.getSize()).toList();
-        }
-        return filteredTodos.skip(skip).limit(pagination.getSize()).toList();
+        return sortComparator.map(todoComparator -> filteredTodos.sorted(todoComparator)
+                .skip(skip).limit(pagination.getSize()).toList()).orElseGet(() -> filteredTodos.skip(skip).limit(pagination.getSize()).toList());
     }
 }

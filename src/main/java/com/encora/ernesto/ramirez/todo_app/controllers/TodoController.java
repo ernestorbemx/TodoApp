@@ -56,8 +56,4 @@ public class TodoController {
         return this.todoService.getStats();
     }
 
-    @GetMapping("/example")
-    public String example() {
-        return "Hola";
-    }
 }
