@@ -41,6 +41,7 @@ public class TodoServiceTests {
         dto.setText("Edited");
         Todo todo1 = new Todo("Test todo 1 :(", LocalDateTime.now().plusDays(2), Priority.HIGH, LocalDateTime.now()) ;
         Mockito.when(todoRepository.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.of(todo1));
+        Mockito.when(todoRepository.save(ArgumentMatchers.any(Todo.class))).thenReturn(todo1);
         assertTrue( service.editTodo(todo1.getId(),dto).isPresent());
         assertEquals(todo1.getText(), dto.getText());
         assertEquals(todo1.getPriority(), dto.getPriority());
@@ -51,6 +52,7 @@ public class TodoServiceTests {
     public void testStatusEdition() {
         Todo todo1 = new Todo("Test todo 1 :(", LocalDateTime.now().plusDays(2), Priority.HIGH, LocalDateTime.now()) ;
         Mockito.when(todoRepository.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.of(todo1));
+        Mockito.when(todoRepository.save(ArgumentMatchers.any(Todo.class))).thenReturn(todo1);
         assertTrue( service.editTodoCompletion(todo1.getId(),true).isPresent());
         assertNotNull(todo1.getCompletionDate());
         assertTrue(todo1.isDone());

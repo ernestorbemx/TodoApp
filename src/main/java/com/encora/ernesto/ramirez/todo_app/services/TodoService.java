@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 @Service
 public class TodoService {
 
-
     private final TodoRepository todoRepository;
 
     public TodoService(TodoRepository todoRepository) {
@@ -33,37 +32,36 @@ public class TodoService {
     // Edition is not guaranteed
     public Optional<Todo> editTodo(int id, TodoDto dto) {
         Optional<Todo> ot = this.todoRepository.findById(id);
-        if(ot.isPresent()) {
+        if (ot.isPresent()) {
             Todo t = ot.get();
             t.setText(dto.getText());
             t.setDueDate(dto.getDueDate());
             t.setPriority(dto.getPriority());
-            return Optional.of(t);
+            return Optional.of(this.todoRepository.save(t)); // Save the updated entity
         }
         return Optional.empty();
     }
 
     public Optional<Todo> editTodoCompletion(int id, boolean done) {
         Optional<Todo> ot = this.todoRepository.findById(id);
-        if(ot.isPresent()) {
+        if (ot.isPresent()) {
             Todo t = ot.get();
             t.setDone(done);
             t.setCompletionDate(done ? LocalDateTime.now() : null);
-            return Optional.of(t);
+            return Optional.of(this.todoRepository.save(t)); // Save the updated entity
         }
         return Optional.empty();
     }
 
     public Optional<Todo> deleteTodo(int todo) {
         Optional<Todo> ot = this.todoRepository.findById(todo);
-        if(ot.isPresent()) {
+        if (ot.isPresent()) {
             this.todoRepository.deleteById(todo);
         }
         return ot;
     }
 
     public Stats getStats() {
-
         return new Stats(
                 (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
                         .filter(t -> t.getCompletionDate() != null)
@@ -80,9 +78,6 @@ public class TodoService {
                 (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
                         .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.HIGH)
                         .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
-                        .average().orElse(-1)
-        );
+                        .average().orElse(-1));
     }
-
-
 }

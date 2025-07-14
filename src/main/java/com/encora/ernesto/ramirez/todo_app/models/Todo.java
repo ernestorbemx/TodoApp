@@ -1,35 +1,42 @@
 package com.encora.ernesto.ramirez.todo_app.models;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a Todo item.
+ * Maps to a database table using JPA annotations.
+ */
+@Entity
 public class Todo {
 
-    private static int nextId = 1;
-    protected Todo() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id; // Primary key
 
+    private String text; // Description of the Todo
+
+    private LocalDateTime dueDate; // Due date for the Todo
+
+    private boolean done; // Status indicating if the Todo is completed
+
+    private LocalDateTime completionDate; // Completion date, set when the Todo is marked as done
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority; // Priority level of the Todo
+
+    private LocalDateTime creationDate; // Creation date of the Todo
+
+    protected Todo() {
+        // Default constructor for JPA
     }
 
-    // This constructor is used for new Todo creation
     public Todo(String text, LocalDateTime dueDate, Priority priority, LocalDateTime creationDate) {
-        this.id = nextId++;
         this.text = text;
         this.dueDate = dueDate;
         this.priority = priority;
         this.creationDate = creationDate;
     }
-
-    private int id;
-
-    private String text;
-
-    private LocalDateTime dueDate;
-    private boolean done;
-
-    private LocalDateTime completionDate;
-
-    private Priority priority;
-
-    private LocalDateTime creationDate;
 
     public int getId() {
         return id;
