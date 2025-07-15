@@ -62,22 +62,21 @@ public class TodoService {
     }
 
     public Stats getStats() {
-        return new Stats(
-                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
-                        .filter(t -> t.getCompletionDate() != null)
-                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
-                        .average().orElse(-1),
-                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
-                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.LOW)
-                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
-                        .average().orElse(-1),
-                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
-                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.MEDIUM)
-                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
-                        .average().orElse(-1),
-                (long) StreamSupport.stream(this.todoRepository.findAll().spliterator(), false)
-                        .filter(t -> t.getCompletionDate() != null && t.getPriority() == Priority.HIGH)
-                        .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
-                        .average().orElse(-1));
+        Iterable<Todo> todos = this.todoRepository.findAll();
+
+        long overallAverage = calculateAverageCompletionTime(todos, null);
+        long lowPriorityAverage = calculateAverageCompletionTime(todos, Priority.LOW);
+        long mediumPriorityAverage = calculateAverageCompletionTime(todos, Priority.MEDIUM);
+        long highPriorityAverage = calculateAverageCompletionTime(todos, Priority.HIGH);
+
+        return new Stats(overallAverage, lowPriorityAverage, mediumPriorityAverage, highPriorityAverage);
+    }
+
+    private long calculateAverageCompletionTime(Iterable<Todo> todos, Priority priority) {
+        return (long) StreamSupport.stream(todos.spliterator(), false)
+                .filter(t -> t.getCompletionDate() != null && (priority == null || t.getPriority() == priority))
+                .mapToLong(t -> SECONDS.between(t.getCreationDate(), t.getCompletionDate()))
+                .average()
+                .orElse(-1);
     }
 }
