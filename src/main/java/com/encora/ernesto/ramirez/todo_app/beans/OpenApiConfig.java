@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for OpenAPI documentation.
+ * Sets up metadata for the API using values from application properties.
+ */
 @Configuration
 public class OpenApiConfig {
 
@@ -18,13 +22,17 @@ public class OpenApiConfig {
     @Value("${app.api.description}")
     private String description;
 
+    /**
+     * Bean to configure OpenAPI metadata.
+     * 
+     * @return OpenAPI instance with API information
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title(title)
                         .version(version)
-                        .description(description)
-                );
+                        .description(description));
     }
 }
